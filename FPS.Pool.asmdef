@@ -1,0 +1,16 @@
+{
+    "name": "FPS.Pool",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ce7d9da630ee21438fefeb8c8c1bb99"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
