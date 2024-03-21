@@ -1,18 +1,18 @@
 {
-    "name": "com.fps.pool",
-    "author": "Fixel",
-    "displayName": "Fluffy pool",
-    "unity": "2022.3",
-    "version": "0.0.1",
-    "keywords": [
-        "Fluffy Pixels",
-        "fps"
-    ],
-    "dependencies": {
-	"com.fps.core": "0.0.1"
-	},
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tka27/fluffy-pool"
-    }
+  "name": "com.fps.pool",
+  "author": "Fixeles",
+  "displayName": "Fluffy pool",
+  "unity": "2022.3",
+  "version": "0.0.1",
+  "keywords": [
+    "Fluffy Pixels",
+    "fps"
+  ],
+  "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fixeles/fluffy-pool"
+  }
 }
