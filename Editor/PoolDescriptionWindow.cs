@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FPS.Pool
 {
-    public class ConfigurePool
+    public class PoolDescriptionWindow
     {
         [MenuItem("FPS/Pool Description")]
         private static void ShowWindow()
