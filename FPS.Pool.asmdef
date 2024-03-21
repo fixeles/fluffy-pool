@@ -2,7 +2,8 @@
     "name": "FPS.Pool",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:0a0d96f11aa7567429557cbc5ea9a1ee"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
