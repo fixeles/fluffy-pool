@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
 
 namespace FPS.Pool
@@ -45,26 +46,24 @@ namespace FPS.Pool
 
         public static T Get<T>(string key) where T : Component
         {
-            if (InactivePoolablesByString.TryGetValue(key, out var pool))
+            if (!InactivePoolablesByString.TryGetValue(key, out var pool))
+                throw new Exception($"FluffyPool: Pool with key \"{key}\" does not exist");
+
+            Component poolable;
+            if (pool.Count > 0)
             {
-                Component poolable;
-                if (pool.Count > 0)
-                {
-                    poolable = pool.First();
-                    pool.Remove(poolable);
-                    poolable.gameObject.SetActive(true);
-                }
-                else
-                    poolable = CreateNew(key);
-
-                ActivePoolablesByString.Add(poolable, key);
-                if (poolable is T component)
-                    return component;
-
-                throw new Exception($"FluffyPool: Poolable with key {key} is not {typeof(T)} ");
+                poolable = pool.First();
+                pool.Remove(poolable);
+                poolable.gameObject.SetActive(true);
             }
+            else
+                poolable = CreateNew(key);
 
-            throw new Exception($"FluffyPool: Pool with key \"{key}\" does not exist");
+            ActivePoolablesByString.Add(poolable, key);
+            if (poolable is T component)
+                return component;
+
+            throw new Exception($"FluffyPool: Poolable with key {key} is not {typeof(T)} ");
         }
 
         public static void Return(Component poolable)
@@ -89,9 +88,9 @@ namespace FPS.Pool
                 Debug.LogWarning($"FluffyPool: Can't return \"{poolable.gameObject.name}\", because it hasn't been registered before");
         }
 
-        public static void Init()
+        public static async UniTask InitAsync()
         {
-            var poolDescription = Resources.Load<PoolDescription>(nameof(PoolDescription));
+            var poolDescription = await Addressables.LoadAssetAsync<PoolDescription>(nameof(PoolDescription)).Task;
 #if UNITY_EDITOR
             poolDescription.RenamePrefabs();
 #endif
@@ -115,7 +114,6 @@ namespace FPS.Pool
 
         private static void PrewarmPoolables(PoolableSetup setup)
         {
-
             Component newPoolable;
             if (string.IsNullOrEmpty(setup.Key))
             {

@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53f9eb09e8c6465e94c1aeb3fbd09120, type: 3}
+  m_Script: {fileID: 11500000, guid: 8f32cd27b1255ca4e890708326876bea, type: 3}
   m_Name: PoolDescription
   m_EditorClassIdentifier: 
-  _setup:
+  poolables:
   - <Prefab>k__BackingField: {fileID: 0}
     <Count>k__BackingField: 1
     <Key>k__BackingField: 
+    <PrewarmType>k__BackingField: 0
+  renamePoolables: 1

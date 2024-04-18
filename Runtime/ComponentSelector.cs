@@ -1,9 +1,8 @@
-#if UNITY_EDITOR
+
 using UnityEditor;
-#endif
 using UnityEngine;
 
-namespace FPS
+namespace FPS.Pool
 {
     public class ComponentSelectorAttribute : PropertyAttribute
     {

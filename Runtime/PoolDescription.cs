@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace FPS.Pool
 {
+    [CreateAssetMenu(menuName = " ")]
     public class PoolDescription : ScriptableObject
     {
         [SerializeField] private PoolableSetup[] poolables = { new() };
