@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using Object = UnityEngine.Object;
 
 namespace FPS.Pool
@@ -90,7 +91,8 @@ namespace FPS.Pool
 
         public static async UniTask InitAsync()
         {
-            var poolDescription = await Addressables.LoadAssetAsync<PoolDescription>(nameof(PoolDescription)).Task;
+            var asset = Addressables.LoadAssetAsync<PoolDescription>(nameof(PoolDescription));
+            var poolDescription = await asset.Task;
 #if UNITY_EDITOR
             poolDescription.RenamePrefabs();
 #endif
@@ -110,6 +112,7 @@ namespace FPS.Pool
                         break;
                 }
             }
+            Addressables.Release(asset);
         }
 
         private static void PrewarmPoolables(PoolableSetup setup)
