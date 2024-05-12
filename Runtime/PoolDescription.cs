@@ -40,6 +40,15 @@ namespace FPS.Pool
                 UnityEditor.AssetDatabase.SaveAssets();
             }
         }
+
+        private class Creator : ScriptableObjectCreator<PoolDescription>
+        {
+            [UnityEditor.InitializeOnLoadMethod]
+            private static void Create()
+            {
+                TryCreate();
+            }
+        }
 #endif
     }
 }
