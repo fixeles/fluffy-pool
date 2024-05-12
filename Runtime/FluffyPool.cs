@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Object = UnityEngine.Object;
 
 namespace FPS.Pool
@@ -26,23 +24,21 @@ namespace FPS.Pool
         public static T Get<T>() where T : Component
         {
             Type type = typeof(T);
-            if (InactivePoolablesByType.TryGetValue(type, out var pool))
+            if (!InactivePoolablesByType.TryGetValue(type, out var pool))
+                throw new Exception($"FluffyPool: Pool with type {type} does not exist");
+
+            Component poolable;
+            if (pool.Count > 0)
             {
-                Component poolable;
-                if (pool.Count > 0)
-                {
-                    poolable = pool.First();
-                    pool.Remove(poolable);
-                    poolable.gameObject.SetActive(true);
-                }
-                else
-                    poolable = CreateNew(type);
-
-                ActivePoolablesByType.Add(poolable);
-                return poolable as T;
+                poolable = pool.First();
+                pool.Remove(poolable);
+                poolable.gameObject.SetActive(true);
             }
+            else
+                poolable = CreateNew(type);
 
-            throw new Exception($"FluffyPool: Pool with type {type} does not exist");
+            ActivePoolablesByType.Add(poolable);
+            return poolable as T;
         }
 
         public static T Get<T>(string key) where T : Component
@@ -89,22 +85,20 @@ namespace FPS.Pool
                 Debug.LogWarning($"FluffyPool: Can't return \"{poolable.gameObject.name}\", because it hasn't been registered before");
         }
 
-        public static async UniTask InitAsync()
+        public static void Init(CancellationToken token)
         {
-            var asset = Addressables.LoadAssetAsync<PoolDescription>(nameof(PoolDescription));
-            var poolDescription = await asset.Task;
+            var poolDescription = Resources.Load<PoolDescription>(nameof(PoolDescription));
 #if UNITY_EDITOR
             poolDescription.RenamePrefabs();
 #endif
-            var root = CreateParents(poolDescription.Setup);
-            var token = root.GetCancellationTokenOnDestroy();
+            CreateParents(poolDescription.Setup);
 
             foreach (var setup in poolDescription.Setup)
             {
                 switch (setup.PrewarmType)
                 {
                     case PoolableSetup.PoolablePrewarmType.Lazy:
-                        PrewarmPoolablesAsync(setup, token).Forget();
+                        PrewarmPoolablesAsync(setup, token);
                         break;
 
                     case PoolableSetup.PoolablePrewarmType.OneFrame:
@@ -112,7 +106,7 @@ namespace FPS.Pool
                         break;
                 }
             }
-            Addressables.Release(asset);
+            Resources.UnloadAsset(poolDescription);
         }
 
         private static void PrewarmPoolables(PoolableSetup setup)
@@ -137,7 +131,7 @@ namespace FPS.Pool
                 }
         }
 
-        private static async UniTaskVoid PrewarmPoolablesAsync(PoolableSetup setup, CancellationToken token)
+        private static async void PrewarmPoolablesAsync(PoolableSetup setup, CancellationToken token)
         {
             Component newPoolable;
             if (string.IsNullOrEmpty(setup.Key))
@@ -148,7 +142,7 @@ namespace FPS.Pool
                     newPoolable = CreateNew(type);
                     newPoolable.gameObject.SetActive(false);
                     InactivePoolablesByType[type].Add(newPoolable);
-                    await UniTask.Yield();
+                    await Task.Yield();
                     if (token.IsCancellationRequested)
                         return;
                 }
@@ -159,7 +153,7 @@ namespace FPS.Pool
                     newPoolable = CreateNew(setup.Key);
                     newPoolable.gameObject.SetActive(false);
                     InactivePoolablesByString[setup.Key].Add(newPoolable);
-                    await UniTask.Yield();
+                    await Task.Yield();
                     if (token.IsCancellationRequested)
                         return;
                 }
@@ -177,7 +171,7 @@ namespace FPS.Pool
             return newPoolable;
         }
 
-        private static GameObject CreateParents(IEnumerable<PoolableSetup> poolablesSetup)
+        private static void CreateParents(IEnumerable<PoolableSetup> poolablesSetup)
         {
             var root = new GameObject
             {
@@ -209,7 +203,6 @@ namespace FPS.Pool
                         Debug.LogError($"FluffyPool: Key {setup.Key} already exists");
                 }
             }
-            return root;
         }
     }
 }
