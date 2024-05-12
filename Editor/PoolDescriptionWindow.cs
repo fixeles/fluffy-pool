@@ -12,7 +12,6 @@ namespace FPS.Pool.Editor
 #else
             var description = UnityEngine.Resources.Load<PoolDescription>(nameof(PoolDescription));
 #endif
-            EditorUtility.OpenPropertyEditor(description);
             description.RenamePrefabs();
             EditorUtility.OpenPropertyEditor(description);
         }
