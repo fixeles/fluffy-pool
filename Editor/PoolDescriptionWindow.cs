@@ -7,9 +7,14 @@ namespace FPS.Pool.Editor
         [MenuItem("FPS/Pool Description")]
         private static void ShowWindow()
         {
-            var poolDescription = Utils.Editor.GetAllInstances<PoolDescription>()[0];
-            poolDescription.RenamePrefabs();
-            EditorUtility.OpenPropertyEditor(poolDescription);
+#if CORE_DEV
+            var description = Utils.Editor.GetAllInstances<PoolDescription>()[0];
+#else
+            var description = UnityEngine.Resources.Load<PoolDescription>(nameof(PoolDescription));
+#endif
+            EditorUtility.OpenPropertyEditor(description);
+            description.RenamePrefabs();
+            EditorUtility.OpenPropertyEditor(description);
         }
     }
 }
