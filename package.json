@@ -3,13 +3,13 @@
   "author": "Fixeles",
   "displayName": "Fluffy Pool",
   "unity": "2022.3",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "Fluffy Pixels",
     "fps"
   ],
   "dependencies": {
-    "com.fps.utils": "0.0.1"
+    "com.fps.utils": "0.0.2"
   },
   "repository": {
     "type": "git",
